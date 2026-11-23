@@ -1,0 +1,24 @@
+﻿# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+
+# Model files
+*.joblib
+*.pkl
+*.pth
+*.pt
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Operating system
+.DS_Store
+Thumbs.db
