@@ -20,7 +20,7 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 | Phase 2 | Dataset Loading and Preprocessing | Completed |
 | Phase 3 | Model Training Engine | Completed |
 | Phase 4 | Training Curve Diagnosis | Completed |
-| Phase 5 | Streamlit Dashboard and Live Charts | Pending |
+| Phase 5 | Streamlit Dashboard and Live Charts | Completed |
 | Phase 6 | Results and Performance Metrics | Pending |
 | Phase 7 | Experiments, CSV Export and Final Testing | Pending |
 | Phase 8 | Final Report and Recommendation | Pending |
@@ -137,6 +137,44 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 
 **Conclusion:** The diagnosis function successfully identifies underfitting, overfitting, and healthy training curves while handling empty histories safely.
 
+## Phase 5 — Streamlit Dashboard and Live Charts
+
+**Status:** Completed
+
+### Implementation
+
+Created `src/app.py` to build an interactive Streamlit dashboard.
+
+Implemented features:
+
+- Streamlit dashboard interface.
+- Sidebar training configuration.
+- Adjustable epochs, learning rate, hidden layer size, dropout, and batch size.
+- Data scaling ON/OFF option.
+- Start Training button.
+- Model training connected with `src/trainer.py`.
+- Live training progress bar.
+- Training and validation loss charts.
+- Chart updates after every 5 epochs.
+- Final training results display.
+
+### Test Results
+
+| Metric | Scaling ON | Scaling OFF |
+|---|---:|---:|
+| Epochs Requested | 30 | 30 |
+| Epochs Run | 30 | 29 |
+| Best Validation Loss | 0.4386 | 0.2030 |
+| Training | Passed | Passed |
+| Progress Bar | Passed | Passed |
+| Live Loss Charts | Passed | Passed |
+
+### Conclusion
+
+The Streamlit dashboard was successfully implemented and tested with data scaling enabled and disabled. Model training, progress tracking, and live loss chart updates worked successfully.
+
+**Note:** This project is an educational machine learning experiment. It is not clinically validated and must not be used for real patient diagnosis or medical decisions.
+
 ## Project Structure
 
 ```text
@@ -149,6 +187,7 @@ meditrain-dashboard/
 |    └── data.py
 |    └── trainer.py
 |    └── diagnosis.py
+|    └── app.py
 ├── README.md
 ├── requirements.txt
 └── .gitignore
@@ -259,13 +298,13 @@ The dashboard will be available after the Streamlit application is implemented.
 - [x] Phase 1 — Dashboard Design and Workflow
 - [X] Phase 2 — Dataset Loading and Preprocessing
 - [X] Phase 3 — Model Training Engine
-- [ ] Phase 4 — Training Curve Diagnosis
-- [ ] Phase 5 — Streamlit Dashboard and Live Charts
+- [X] Phase 4 — Training Curve Diagnosis
+- [X] Phase 5 — Streamlit Dashboard and Live Charts
 - [ ] Phase 6 — Results and Performance Metrics
 - [ ] Phase 7 — Experiments and Final Testing
 - [ ] Phase 8 — Final Report and Recommendation
 
 ---
 
-**Current Status:** Phase 1-3 Completed.  
-**Next Step:** Phase 4 — Training Curve Diagnosis
+**Current Status:** Phase 1-5 Completed.  
+**Next Step:** Phase 6 — Results and Performance Metrics
