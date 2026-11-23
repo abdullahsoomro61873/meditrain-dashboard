@@ -6,7 +6,7 @@ A Live Training Dashboard for monitoring machine learning training and validatio
 
 **Client:** City Hospital  
 **Project:** MediTrain Dashboard — City Hospital  
-**Dataset:** Breast Cancer Wisconsin Dataset (We used a built-in dataset from Scikit-learn) 
+**Dataset:** Breast Cancer Wisconsin Dataset (We used a built-in dataset from Scikit-learn)
 **Technology:** Python, PyTorch, Streamlit, Scikit-learn
 
 The goal is to build an interactive dashboard that allows a data team to monitor model training, visualize loss curves, diagnose model performance, and compare experiments.
@@ -19,7 +19,7 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 |---|---|---|
 | Phase 1 | Dashboard Design and Workflow | Completed |
 | Phase 2 | Dataset Loading and Preprocessing | Completed |
-| Phase 3 | Model Training Engine | Pending |
+| Phase 3 | Model Training Engine | Completed |
 | Phase 4 | Training Curve Diagnosis | Pending |
 | Phase 5 | Streamlit Dashboard and Live Charts | Pending |
 | Phase 6 | Results and Performance Metrics | Pending |
@@ -78,6 +78,36 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 
 **Conclusion:** Dataset loading, label conversion, data splitting, and optional scaling successfully verified.
 
+## Phase 3 — Model Training Engine
+
+**Status:** Completed
+
+- Created a PyTorch neural network for binary classification.
+- Implemented configurable hidden-layer neurons.
+- Added dropout regularization.
+- Implemented weight decay using Adam optimizer.
+- Used BCEWithLogitsLoss for binary classification.
+- Calculated training and validation loss after every epoch.
+- Implemented epoch callback functionality (`on_epoch`).
+- Added early stopping with configurable patience.
+- Saved and restored the best model state.
+- Stored training and validation losses in history.
+
+### Results
+
+| Test | Expected | Actual | Status |
+|---|---|---|---|
+| Model Training | Successful | Successful | Passed |
+| Epochs Run | 30 | 30 | Passed |
+| Best Validation Loss | Calculated | 0.0712 | Passed |
+| Callback Calls | 30 | 30 | Passed |
+| Training History | 30 | 30 | Passed |
+| Validation History | 30 | 30 | Passed |
+| Early Stopping | Enabled | 4 epochs | Passed |
+| Best Model Restoration | Successful | Successful | Passed |
+
+**Conclusion:** The PyTorch training engine successfully trains the model, records training and validation losses, supports epoch callbacks, and implements early stopping with best model restoration.
+
 ## Project Structure
 
 ```text
@@ -88,6 +118,7 @@ meditrain-dashboard/
 ├── results/
 ├── src/
 |    └── data.py
+|    └── trainer.py
 ├── README.md
 ├── requirements.txt
 └── .gitignore
@@ -100,9 +131,6 @@ The following steps describe how to set up and run the project on Windows using 
 
 ```powershell
 git clone https://github.com/abdullahsoomro61873/meditrain-dashboard
-```
-
-```powershell
 cd meditrain-dashboard
 ```
 
@@ -124,13 +152,49 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### 5. Run the Project
+### 5. Phase 2 — Dataset Testing
 
-The dashboard will be launched in a later project phase using:
+**Test dataset splitting:**
+
+```powershell
+python -c "from src.data import load_data; d = load_data(); print('Train:', d[0].shape); print('Validation:', d[1].shape); print('Test:', d[2].shape)"
+```
+
+**Test scaling:**
+
+```powershell
+python -c "from src.data import load_data; import numpy as np; d = load_data(); print('Training mean:', np.mean(d[0])); print('Training std:', np.std(d[0]))"
+```
+
+**Test scaling OFF:**
+
+```powershell
+python -c "from src.data import load_data; d = load_data(scale=False); print('Train:', d[0].shape); print('Scaler:', d[6])"
+```
+
+### 6. Phase 3 — Training Engine Testing
+
+**Test model training and epoch callbacks:**
+
+```powershell
+python -c "from src.data import load_data; from src.trainer import train; events=[]; model,hist=train({'hidden_size':16,'dropout':0.3,'learning_rate':0.001,'weight_decay':0.01,'epochs':30,'batch_size':32,'patience':8,'early_stopping':True}, load_data(), on_epoch=lambda epoch,h: events.append(epoch)); print('Epochs run:',hist['epochs_run']); print('Best validation loss:',round(hist['best_val_loss'],4)); print('Callback calls:',len(events)); print('Training history:',len(hist['train'])); print('Validation history:',len(hist['val']))"
+```
+
+**Test early stopping:**
+
+```powershell
+python -c "from src.data import load_data; from src.trainer import train; cfg={'hidden_size':16,'dropout':0.3,'learning_rate':0,'epochs':20,'patience':3,'early_stopping':True}; model,hist=train(cfg,load_data()); print('Requested epochs: 20'); print('Actual epochs:',hist['epochs_run']); print('Early stopping:',hist['epochs_run'] < 20)"
+```
+
+Note: The zero learning rate in the early-stopping test is intentional and used only to verify the stopping mechanism.
+
+### 7. Run the Dashboard
 
 ```powershell
 streamlit run src/app.py
 ```
+
+The dashboard will be available after the Streamlit application is implemented.
 
 ## Technologies
 
@@ -146,7 +210,7 @@ streamlit run src/app.py
 
 - [x] Phase 1 — Dashboard Design and Workflow
 - [X] Phase 2 — Dataset Loading and Preprocessing
-- [ ] Phase 3 — Model Training Engine
+- [X] Phase 3 — Model Training Engine
 - [ ] Phase 4 — Training Curve Diagnosis
 - [ ] Phase 5 — Streamlit Dashboard and Live Charts
 - [ ] Phase 6 — Results and Performance Metrics
@@ -155,5 +219,5 @@ streamlit run src/app.py
 
 ---
 
-**Current Status:** Phase 1 and 2 Completed.  
-**Next Step:** Phase 3 — Model Training Engine
+**Current Status:** Phase 1-3 Completed.  
+**Next Step:** Phase 4 — Training Curve Diagnosis
