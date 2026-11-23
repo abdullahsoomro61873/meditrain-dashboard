@@ -7,7 +7,6 @@ A Live Training Dashboard for monitoring machine learning training and validatio
 **Client:** City Hospital  
 **Project:** MediTrain Dashboard — City Hospital  
 **Dataset:** Breast Cancer Wisconsin Dataset (We used a built-in dataset from Scikit-learn)
-**Technology:** Python, PyTorch, Streamlit, Scikit-learn
 
 The goal is to build an interactive dashboard that allows a data team to monitor model training, visualize loss curves, diagnose model performance, and compare experiments.
 
@@ -20,7 +19,7 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 | Phase 1 | Dashboard Design and Workflow | Completed |
 | Phase 2 | Dataset Loading and Preprocessing | Completed |
 | Phase 3 | Model Training Engine | Completed |
-| Phase 4 | Training Curve Diagnosis | Pending |
+| Phase 4 | Training Curve Diagnosis | Completed |
 | Phase 5 | Streamlit Dashboard and Live Charts | Pending |
 | Phase 6 | Results and Performance Metrics | Pending |
 | Phase 7 | Experiments, CSV Export and Final Testing | Pending |
@@ -108,6 +107,36 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 
 **Conclusion:** The PyTorch training engine successfully trains the model, records training and validation losses, supports epoch callbacks, and implements early stopping with best model restoration.
 
+## Phase 4 — Training Curve Diagnosis
+
+**Status:** Completed
+
+- Created `diagnosis.py` for analyzing training and validation loss curves.
+- Implemented underfitting detection (training loss > 0.3).
+- Implemented overfitting detection (final validation loss 30% above its best).
+- Implemented healthy model diagnosis.
+- Added empty training history validation.
+- Verified all three diagnosis conditions.
+
+### Diagnosis Rules
+
+| Condition | Diagnosis |
+|---|---|
+| Training loss > 0.3 | Underfitting |
+| Final validation loss ≥ 1.3 × best validation loss | Overfitting |
+| Neither condition applies | Healthy |
+
+### Results
+
+| Test | Expected | Actual | Status |
+|---|---|---|---|
+| Underfitting | underfitting | underfitting | Passed |
+| Overfitting | overfitting | overfitting | Passed |
+| Healthy | healthy | healthy | Passed |
+| Empty History | ValueError | ValueError | Passed |
+
+**Conclusion:** The diagnosis function successfully identifies underfitting, overfitting, and healthy training curves while handling empty histories safely.
+
 ## Project Structure
 
 ```text
@@ -119,6 +148,7 @@ meditrain-dashboard/
 ├── src/
 |    └── data.py
 |    └── trainer.py
+|    └── diagnosis.py
 ├── README.md
 ├── requirements.txt
 └── .gitignore
@@ -188,7 +218,25 @@ python -c "from src.data import load_data; from src.trainer import train; cfg={'
 
 Note: The zero learning rate in the early-stopping test is intentional and used only to verify the stopping mechanism.
 
-### 7. Run the Dashboard
+### 7. Phase 4 — Training Curve Diagnosis
+
+Run the following commands to verify underfitting, overfitting, healthy model diagnosis, and empty history validation.
+
+**Test all three diagnosis conditions:**
+
+```powershell
+python -c "from src.diagnosis import diagnose; tests={'Underfitting':{'train':[0.8,0.6,0.5],'val':[0.7,0.6,0.5]},'Overfitting':{'train':[0.2,0.1,0.05],'val':[0.2,0.1,0.15]},'Healthy':{'train':[0.2,0.15,0.1],'val':[0.25,0.18,0.12]}}; [print(name, '->', diagnose(hist)) for name,hist in tests.items()]"
+```
+
+**Test empty training history:**
+
+```powershell
+python -c "from src.diagnosis import diagnose; diagnose({'train': [], 'val': []})"
+```
+
+The second command is expected to raise `ValueError: Training history cannot be empty.`
+
+### 8. Run the Dashboard
 
 ```powershell
 streamlit run src/app.py
