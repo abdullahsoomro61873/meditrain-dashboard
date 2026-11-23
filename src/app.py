@@ -10,6 +10,9 @@ import pandas as pd
 from data import load_data
 from trainer import train
 
+from diagnosis import diagnose
+from evaluation import evaluate_model
+
 # ------------------------------------------
 # 1. Streamlit Page Configuration
 # ------------------------------------------
@@ -173,6 +176,41 @@ if st.button("Start Training", type="primary"):
         on_epoch=update_training_chart
     )
 
+
+    # --------------------------------------
+    # Model Evaluation Results
+    # --------------------------------------
+
+    st.subheader("Model Evaluation")
+
+    # Evaluate the trained model on the test dataset
+    results = evaluate_model(model, data)
+
+    # Display evaluation metrics
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.metric(
+        "Test Accuracy",
+        f"{results['test_accuracy'] * 100:.2f}%"
+        )
+
+    st.metric(
+        "Cancers Found",
+        results["cancers_found"]
+        )
+
+    with col2:
+        st.metric(
+        "False Alarms",
+        results["false_alarms"]
+        )
+
+    st.metric(
+        "Missed Cancers",
+        results["missed_cancers"]
+    )
+
     # --------------------------------------
     # 8. Display Final Training Chart
     # --------------------------------------
@@ -210,6 +248,23 @@ if st.button("Start Training", type="primary"):
             "Best Validation Loss",
             f"{history['best_val_loss']:.4f}"
         )
+
+    # --------------------------------------
+    # Model Training Diagnosis
+    # --------------------------------------
+
+    st.subheader("Training Curve Diagnosis")
+
+    diagnosis = diagnose(history)
+
+    if diagnosis == "underfitting":
+        st.warning("Model Diagnosis: Underfitting")
+
+    elif diagnosis == "overfitting":
+        st.warning("Model Diagnosis: Overfitting")
+
+    else:
+        st.success("Model Diagnosis: Healthy")
 
     # --------------------------------------
     # 10. Educational Disclaimer

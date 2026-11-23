@@ -21,7 +21,7 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 | Phase 3 | Model Training Engine | Completed |
 | Phase 4 | Training Curve Diagnosis | Completed |
 | Phase 5 | Streamlit Dashboard and Live Charts | Completed |
-| Phase 6 | Results and Performance Metrics | Pending |
+| Phase 6 | Results and Performance Metrics | Completed |
 | Phase 7 | Experiments, CSV Export and Final Testing | Pending |
 | Phase 8 | Final Report and Recommendation | Pending |
 
@@ -175,6 +175,58 @@ The Streamlit dashboard was successfully implemented and tested with data scalin
 
 **Note:** This project is an educational machine learning experiment. It is not clinically validated and must not be used for real patient diagnosis or medical decisions.
 
+## Phase 6 — Model Evaluation and Results
+
+**Status:** Completed
+
+### Implementation
+
+Created `src/evaluation.py` to evaluate the trained model using the held-out test dataset.
+
+Implemented metrics:
+
+- Test Accuracy
+- Cancers Found (True Positives)
+- False Alarms (False Positives)
+- True Negatives
+- Missed Cancers (False Negatives)
+
+Connected model diagnosis and evaluation results to the Streamlit dashboard.
+
+### Test Configuration
+
+| Setting | Value |
+|---|---:|
+| Epochs | 30 |
+| Learning Rate | 0.001 |
+| Hidden Layer Size | 16 |
+| Dropout | 0.3 |
+| Batch Size | 32 |
+
+### Evaluation Results
+
+| Metric | Actual Result |
+|---|---:|
+| Test Samples | 114 |
+| Test Accuracy | 95.61% |
+| Cancers Found | 39 |
+| False Alarms | 2 |
+| True Negatives | 70 |
+| Missed Cancers | 3 |
+
+### Verification
+
+- Model evaluation function tested successfully.
+- All 114 test samples accounted for.
+- Training curve diagnosis displayed on dashboard.
+- Evaluation metrics displayed on dashboard.
+
+### Conclusion
+
+Model evaluation and dashboard integration were successfully implemented and tested.
+
+**Important:** These results are from an educational dataset experiment. The model is not clinically validated and must not be used for real patient diagnosis or medical decisions.
+
 ## Project Structure
 
 ```text
@@ -188,6 +240,7 @@ meditrain-dashboard/
 |    └── trainer.py
 |    └── diagnosis.py
 |    └── app.py
+|    └── evaluation.py
 ├── README.md
 ├── requirements.txt
 └── .gitignore
@@ -283,6 +336,24 @@ streamlit run src/app.py
 
 The dashboard will be available after the Streamlit application is implemented.
 
+### 9. Test Phase 6 — Model Evaluation
+
+Run the evaluation test from the project root directory:
+
+```powershell
+python -c "from src.data import load_data; from src.trainer import train; from src.evaluation import evaluate_model; data=load_data(); config={'epochs':30,'learning_rate':0.001,'hidden_size':16,'dropout':0.3,'batch_size':32,'patience':20,'early_stopping':True,'seed':42}; model,hist=train(config,data); results=evaluate_model(model,data); print('Test Accuracy:',round(results['test_accuracy'],4)); print('Cancers Found:',results['cancers_found']); print('False Alarms:',results['false_alarms']); print('True Negatives:',results['true_negatives']); print('Missed Cancers:',results['missed_cancers'])"
+```
+
+Run the Streamlit dashboard:
+
+```powershell
+streamlit run src/app.py
+```
+
+Verify the training diagnosis and evaluation metrics on the dashboard.
+
+**Note:** The held-out test dataset is reserved for final evaluation. Do not repeatedly use it for model tuning.
+
 ## Technologies
 
 - Python
@@ -300,11 +371,11 @@ The dashboard will be available after the Streamlit application is implemented.
 - [X] Phase 3 — Model Training Engine
 - [X] Phase 4 — Training Curve Diagnosis
 - [X] Phase 5 — Streamlit Dashboard and Live Charts
-- [ ] Phase 6 — Results and Performance Metrics
+- [X] Phase 6 — Results and Performance Metrics
 - [ ] Phase 7 — Experiments and Final Testing
 - [ ] Phase 8 — Final Report and Recommendation
 
 ---
 
-**Current Status:** Phase 1-5 Completed.  
-**Next Step:** Phase 6 — Results and Performance Metrics
+**Current Status:** Phase 1-6 Completed.  
+**Next Step:** Phase 7 — Experiments and Final Testing
