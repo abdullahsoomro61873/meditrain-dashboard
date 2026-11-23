@@ -352,8 +352,6 @@ However, the project is an educational machine learning demonstration and is not
 meditrain-dashboard/
 │
 ├── .venv/
-├── data/
-├── results/
 ├── src/
 |    └── data.py
 |    └── trainer.py
