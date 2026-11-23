@@ -5,8 +5,8 @@ A Live Training Dashboard for monitoring machine learning training and validatio
 ## Project Overview
 
 **Client:** City Hospital  
-**Project:** Project 5 — A Live Training Dashboard  
-**Dataset:** Breast Cancer Wisconsin Dataset  
+**Project:** MediTrain Dashboard — City Hospital  
+**Dataset:** Breast Cancer Wisconsin Dataset (We used a built-in dataset from Scikit-learn) 
 **Technology:** Python, PyTorch, Streamlit, Scikit-learn
 
 The goal is to build an interactive dashboard that allows a data team to monitor model training, visualize loss curves, diagnose model performance, and compare experiments.
@@ -18,7 +18,7 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 | Phase | Description | Status |
 |---|---|---|
 | Phase 1 | Dashboard Design and Workflow | Completed |
-| Phase 2 | Dataset Loading and Preprocessing | Pending |
+| Phase 2 | Dataset Loading and Preprocessing | Completed |
 | Phase 3 | Model Training Engine | Pending |
 | Phase 4 | Training Curve Diagnosis | Pending |
 | Phase 5 | Streamlit Dashboard and Live Charts | Pending |
@@ -52,6 +52,32 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 - CSV download option.
 - Educational patient-data demonstration.
 
+## Phase 2 — Dataset Loading and Preprocessing
+
+**Status:** Completed
+
+- Loaded Breast Cancer Wisconsin dataset (569 samples, 30 features).
+- Converted labels: Malignant(cancerous tumors) = 1, Benign(non-cancerous tumors) = 0.
+- Split dataset into 60% training, 20% validation and 20% testing.
+- Applied StandardScaler fitted only on training data.
+- Added optional scaling ON/OFF functionality.
+- Verified dataset shapes and scaling results.
+
+### Results
+
+| Test | Expected | Actual | Status |
+|---|---:|---:|---|
+| Total Samples | 569 | 569 | Passed |
+| Features | 30 | 30 | Passed |
+| Training Samples | 341 | 341 | Passed |
+| Validation Samples | 114 | 114 | Passed |
+| Testing Samples | 114 | 114 | Passed |
+| Training Mean | ≈ 0 | 4.86e-16 | Passed |
+| Training Std | ≈ 1 | 1.0 | Passed |
+| Scaling OFF | None | None | Passed |
+
+**Conclusion:** Dataset loading, label conversion, data splitting, and optional scaling successfully verified.
+
 ## Project Structure
 
 ```text
@@ -61,9 +87,49 @@ meditrain-dashboard/
 ├── data/
 ├── results/
 ├── src/
+|    └── data.py
 ├── README.md
 ├── requirements.txt
 └── .gitignore
+```
+## Installation and Setup
+
+The following steps describe how to set up and run the project on Windows using PowerShell.
+
+### 1. Clone the GitHub Repository
+
+```powershell
+git clone https://github.com/abdullahsoomro61873/meditrain-dashboard
+```
+
+```powershell
+cd meditrain-dashboard
+```
+
+### 2. Create a Virtual Environment
+
+```powershell
+python -m venv .venv
+```
+
+### 3. Activate the Virtual Environment
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+### 4. Install Dependencies
+
+```powershell
+pip install -r requirements.txt
+```
+
+### 5. Run the Project
+
+The dashboard will be launched in a later project phase using:
+
+```powershell
+streamlit run src/app.py
 ```
 
 ## Technologies
@@ -79,7 +145,7 @@ meditrain-dashboard/
 ## Project Progress
 
 - [x] Phase 1 — Dashboard Design and Workflow
-- [ ] Phase 2 — Dataset Loading and Preprocessing
+- [X] Phase 2 — Dataset Loading and Preprocessing
 - [ ] Phase 3 — Model Training Engine
 - [ ] Phase 4 — Training Curve Diagnosis
 - [ ] Phase 5 — Streamlit Dashboard and Live Charts
@@ -89,5 +155,5 @@ meditrain-dashboard/
 
 ---
 
-**Current Status:** Phase 1 Completed.  
-**Next Step:** Phase 2 — Dataset Loading and Preprocessing.
+**Current Status:** Phase 1 and 2 Completed.  
+**Next Step:** Phase 3 — Model Training Engine
