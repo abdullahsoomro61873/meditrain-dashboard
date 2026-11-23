@@ -22,12 +22,10 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 | Phase 4 | Training Curve Diagnosis | Completed |
 | Phase 5 | Streamlit Dashboard and Live Charts | Completed |
 | Phase 6 | Results and Performance Metrics | Completed |
-| Phase 7 | Experiments, CSV Export and Final Testing | Pending |
-| Phase 8 | Final Report and Recommendation | Pending |
+| Phase 7 | Experiments, CSV Export and Final Testing | Completed |
+| Phase 8 | Final Report and Recommendation | Completed |
 
 ## Phase 1 — Dashboard Design and Workflow
-
-**Status:** Completed
 
 ### Workflow
 
@@ -53,8 +51,6 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 
 ## Phase 2 — Dataset Loading and Preprocessing
 
-**Status:** Completed
-
 - Loaded Breast Cancer Wisconsin dataset (569 samples, 30 features).
 - Converted labels: Malignant(cancerous tumors) = 1, Benign(non-cancerous tumors) = 0.
 - Split dataset into 60% training, 20% validation and 20% testing.
@@ -78,8 +74,6 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 **Conclusion:** Dataset loading, label conversion, data splitting, and optional scaling successfully verified.
 
 ## Phase 3 — Model Training Engine
-
-**Status:** Completed
 
 - Created a PyTorch neural network for binary classification.
 - Implemented configurable hidden-layer neurons.
@@ -109,8 +103,6 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 
 ## Phase 4 — Training Curve Diagnosis
 
-**Status:** Completed
-
 - Created `diagnosis.py` for analyzing training and validation loss curves.
 - Implemented underfitting detection (training loss > 0.3).
 - Implemented overfitting detection (final validation loss 30% above its best).
@@ -138,8 +130,6 @@ The goal is to build an interactive dashboard that allows a data team to monitor
 **Conclusion:** The diagnosis function successfully identifies underfitting, overfitting, and healthy training curves while handling empty histories safely.
 
 ## Phase 5 — Streamlit Dashboard and Live Charts
-
-**Status:** Completed
 
 ### Implementation
 
@@ -176,8 +166,6 @@ The Streamlit dashboard was successfully implemented and tested with data scalin
 **Note:** This project is an educational machine learning experiment. It is not clinically validated and must not be used for real patient diagnosis or medical decisions.
 
 ## Phase 6 — Model Evaluation and Results
-
-**Status:** Completed
 
 ### Implementation
 
@@ -227,6 +215,143 @@ Model evaluation and dashboard integration were successfully implemented and tes
 
 **Important:** These results are from an educational dataset experiment. The model is not clinically validated and must not be used for real patient diagnosis or medical decisions.
 
+## Phase 7 — Experiment Tracking, Sample Demonstration and Final Decision
+
+### 1. Experiment Tracking
+
+An experiment tracking system was implemented to record and compare model training experiments.
+
+Features:
+- Records each experiment's configuration.
+- Stores training and validation loss.
+- Displays experiment history in a table.
+- Provides CSV download functionality.
+
+### 2. Experiment Configuration
+
+Four experiments were conducted by changing one hyperparameter at a time.
+
+| Experiment | Epochs | Learning Rate | Hidden Size | Dropout | Batch Size | Scaling |
+|---|---:|---:|---:|---:|---:|---|
+| 1 | 30 | 0.0001 | 16 | 0.3 | 32 | ON |
+| 2 | 30 | 0.005 | 16 | 0.3 | 32 | ON |
+| 3 | 30 | 0.0001 | 32 | 0.3 | 32 | ON |
+| 4 | 30 | 0.0001 | 16 | 0.5 | 32 | ON |
+
+### 3. Experiment Results
+
+| Experiment | Best Validation Loss | Final Training Loss | Final Validation Loss | Diagnosis |
+|---|---:|---:|---:|---|
+| 1 | 0.4386 | 0.4781 | 0.4386 | Underfitting |
+| 2 | 0.0414 | 0.0458 | 0.0414 | Healthy |
+| 3 | 0.3929 | 0.4356 | 0.3929 | Underfitting |
+| 4 | 0.4486 | 0.4966 | 0.4486 | Underfitting |
+
+### 4. Best Model Selection
+
+**Selected Model: Experiment 2**
+
+Configuration:
+- Epochs: 30
+- Learning Rate: 0.005
+- Hidden Size: 16
+- Dropout: 0.3
+- Batch Size: 32
+- Data Scaling: Enabled
+
+Results:
+- Best Validation Loss: 0.0414
+- Final Training Loss: 0.0458
+- Final Validation Loss: 0.0414
+- Diagnosis: Healthy
+
+**Selection Reason:**
+
+Experiment 2 achieved the lowest validation loss among all four experiments and received a healthy training diagnosis.
+
+The model was selected using validation results, without using the held-out test dataset for experiment tuning.
+
+### 5. Educational Sample Demonstration
+
+An educational sample prediction feature was added to the dashboard.
+
+#### How to Use
+
+1. Start model training.
+2. Wait until training is completed.
+3. Navigate to Educational Sample Demonstration.
+4. Select an example sample from the dropdown.
+5. Click the **Predict Example Sample** button.
+6. Review the prediction results.
+
+#### Prediction Outputs
+
+- **Predicted Class:** Model prediction (Malignant or Benign).
+- **Predicted Probability Score:** Model output probability score.
+- **Dataset Label:** Actual category from the dataset.
+
+#### Demonstration Rules and Limitations
+
+1. Model training must be completed before using this feature.
+2. Only validation dataset examples are used.
+3. The feature is for educational demonstration only.
+4. Matching a dataset label does not prove medical reliability.
+5. The probability score is not a clinically validated risk estimate.
+6. Real patient information must not be entered or used.
+7. The model must not be used for real patient diagnosis or medical decisions.
+
+### 6. Final Test Results
+
+The held-out test evaluation was performed in Phase 6.
+
+Previously recorded results:
+
+| Metric | Result |
+|---|---:|
+| Test Accuracy | 95.61% |
+| Cancers Found (TP) | 39 |
+| False Alarms (FP) | 2 |
+| True Negatives (TN) | 70 |
+| Missed Cancers (FN) | 3 |
+| Total Test Samples | 114 |
+
+The test results are documented from the Phase 6 evaluation. The test dataset was not reused for Phase 7 experiment tuning.
+
+**Important:** These test results belong to the model configuration evaluated in Phase 6; they should not automatically be attributed to Experiment 2.
+
+### 7. Final Decision
+
+**Selected Model: Experiment 2**
+
+Experiment 2 was selected based on its validation performance.
+
+However, the project is an educational machine learning demonstration and is not ready for real-world clinical use.
+
+#### Three Reasons the Model Is Not Ready for Real-World Use
+
+1. **Limited Dataset:** The model uses a single public dataset with a limited number of samples. Its performance may not generalize to other populations or data sources.
+
+2. **No Clinical Validation:** The model has not undergone clinical testing, external validation, or approval by qualified medical professionals.
+
+3. **Prediction Errors:** The Phase 6 test evaluation recorded 2 false alarms and 3 missed cancers. These errors demonstrate that the model cannot be relied upon for medical decisions.
+
+### 8. Phase 7 Deliverables
+
+- Experiment tracking table implemented.
+- CSV download functionality implemented.
+- Four hyperparameter experiments completed.
+- Experiment results compared.
+- Best model selected using validation results.
+- Educational sample demonstration implemented and tested.
+- Final decision documented.
+- Project limitations and safety disclaimer documented.
+
+### Experiment Tracking
+
+- Experiment history table implemented.
+- CSV download functionality implemented.
+- Four experiments completed and compared.
+
 ## Project Structure
 
 ```text
@@ -242,6 +367,7 @@ meditrain-dashboard/
 |    └── app.py
 |    └── evaluation.py
 ├── README.md
+|── FINAL_REPORT.md
 ├── requirements.txt
 └── .gitignore
 ```
@@ -336,7 +462,7 @@ streamlit run src/app.py
 
 The dashboard will be available after the Streamlit application is implemented.
 
-### 9. Test Phase 6 — Model Evaluation
+### 9. Phase 6 — Model Evaluation
 
 Run the evaluation test from the project root directory:
 
@@ -363,19 +489,3 @@ Verify the training diagnosis and evaluation metrics on the dashboard.
 - NumPy
 - Scikit-learn
 - Matplotlib
-
-## Project Progress
-
-- [x] Phase 1 — Dashboard Design and Workflow
-- [X] Phase 2 — Dataset Loading and Preprocessing
-- [X] Phase 3 — Model Training Engine
-- [X] Phase 4 — Training Curve Diagnosis
-- [X] Phase 5 — Streamlit Dashboard and Live Charts
-- [X] Phase 6 — Results and Performance Metrics
-- [ ] Phase 7 — Experiments and Final Testing
-- [ ] Phase 8 — Final Report and Recommendation
-
----
-
-**Current Status:** Phase 1-6 Completed.  
-**Next Step:** Phase 7 — Experiments and Final Testing

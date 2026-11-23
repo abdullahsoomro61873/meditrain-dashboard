@@ -1,20 +1,22 @@
 
 # ==========================================
 # MediTrain - Live Training Dashboard
-# Phase 5: Streamlit Dashboard and Live Charts
+# Phase 7: Experiment Tracking
 # ==========================================
 
 import streamlit as st
 import pandas as pd
+import torch
 
+from datetime import datetime
+
+# Import project modules
 from data import load_data
 from trainer import train
-
 from diagnosis import diagnose
-from evaluation import evaluate_model
 
 # ------------------------------------------
-# 1. Streamlit Page Configuration
+# 1. Page Configuration
 # ------------------------------------------
 
 st.set_page_config(
@@ -23,63 +25,52 @@ st.set_page_config(
     layout="wide"
 )
 
-# Dashboard title and description
 st.title("🏥 MediTrain — Live Training Dashboard")
 
 st.write(
-    "An educational dashboard for experimenting "
-    "with machine learning model training."
+    "Educational dashboard for machine learning "
+    "training and experiment tracking."
 )
 
-st.divider()
+# Initialize experiment storage for this session
+if "experiments" not in st.session_state:
+    st.session_state.experiments = []
 
 
 # ------------------------------------------
-# 2. Sidebar - Training Settings
+# 2. Sidebar Training Settings
 # ------------------------------------------
 
-st.sidebar.header("⚙️ Training Settings")
+st.sidebar.header("Training Settings")
 
-# Number of training epochs
 epochs = st.sidebar.slider(
     "Number of Epochs",
-    min_value=10,
-    max_value=200,
-    value=100,
-    step=10
+    10, 200, 100, 10
 )
 
-# Learning rate controls optimizer updates
 learning_rate = st.sidebar.select_slider(
     "Learning Rate",
     options=[0.0001, 0.0005, 0.001, 0.005, 0.01],
     value=0.001
 )
 
-# Number of neurons in the hidden layer
 hidden_size = st.sidebar.selectbox(
     "Hidden Layer Size",
-    options=[8, 16, 32, 64],
+    [8, 16, 32, 64],
     index=1
 )
 
-# Dropout helps regularize the model
 dropout = st.sidebar.slider(
     "Dropout",
-    min_value=0.0,
-    max_value=0.8,
-    value=0.3,
-    step=0.1
+    0.0, 0.8, 0.3, 0.1
 )
 
-# Number of samples processed in each batch
 batch_size = st.sidebar.selectbox(
     "Batch Size",
-    options=[16, 32, 64],
+    [16, 32, 64],
     index=1
 )
 
-# Enable or disable feature scaling
 scale_data = st.sidebar.checkbox(
     "Enable Data Scaling",
     value=True
@@ -87,38 +78,35 @@ scale_data = st.sidebar.checkbox(
 
 
 # ------------------------------------------
-# 3. Display Selected Configuration
+# 3. Display Configuration
 # ------------------------------------------
 
 st.subheader("Selected Training Configuration")
 
-config_display = {
+st.write({
     "Epochs": epochs,
     "Learning Rate": learning_rate,
     "Hidden Layer Size": hidden_size,
     "Dropout": dropout,
     "Batch Size": batch_size,
     "Data Scaling": scale_data
-}
-
-st.write(config_display)
+})
 
 st.divider()
 
 
 # ------------------------------------------
-# 4. Training Section
+# 4. Start Model Training
 # ------------------------------------------
 
-st.subheader("🚀 Model Training")
+st.subheader("Model Training")
 
-# Start training when the button is clicked
 if st.button("Start Training", type="primary"):
 
-    # Load and preprocess the dataset
+    # Load dataset with selected scaling option
     data = load_data(scale=scale_data)
 
-    # Collect all model training settings
+    # Prepare training configuration
     config = {
         "epochs": epochs,
         "learning_rate": learning_rate,
@@ -130,30 +118,20 @@ if st.button("Start Training", type="primary"):
         "seed": 42
     }
 
-    # --------------------------------------
-    # 5. Progress Bar and Chart Placeholders
-    # --------------------------------------
-
+    # Create dashboard placeholders
     progress_bar = st.progress(0)
-
     status_text = st.empty()
-
     chart_placeholder = st.empty()
 
-    # --------------------------------------
-    # 6. Live Training Callback
-    # --------------------------------------
-
+    # Callback for live training updates
     def update_training_chart(epoch, history):
 
-        # Calculate training progress
         progress = min(epoch / epochs, 1.0)
 
         progress_bar.progress(progress)
 
-        # Display current epoch
         status_text.write(
-            f"Training in progress: Epoch {epoch}/{epochs}"
+            f"Training: Epoch {epoch}/{epochs}"
         )
 
         # Update chart after every 5 epochs
@@ -166,55 +144,19 @@ if st.button("Start Training", type="primary"):
 
             chart_placeholder.line_chart(chart_data)
 
-    # --------------------------------------
-    # 7. Train the Model
-    # --------------------------------------
-
+    # Train model
     model, history = train(
         config,
         data,
         on_epoch=update_training_chart
     )
 
+    # Save model and validation samples for demo
+    st.session_state.demo_model = model
+    st.session_state.demo_X_val = data[1]
+    st.session_state.demo_y_val = data[4]
 
-    # --------------------------------------
-    # Model Evaluation Results
-    # --------------------------------------
-
-    st.subheader("Model Evaluation")
-
-    # Evaluate the trained model on the test dataset
-    results = evaluate_model(model, data)
-
-    # Display evaluation metrics
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.metric(
-        "Test Accuracy",
-        f"{results['test_accuracy'] * 100:.2f}%"
-        )
-
-    st.metric(
-        "Cancers Found",
-        results["cancers_found"]
-        )
-
-    with col2:
-        st.metric(
-        "False Alarms",
-        results["false_alarms"]
-        )
-
-    st.metric(
-        "Missed Cancers",
-        results["missed_cancers"]
-    )
-
-    # --------------------------------------
-    # 8. Display Final Training Chart
-    # --------------------------------------
-
+    # Display final loss chart
     final_chart = pd.DataFrame({
         "Training Loss": history["train"],
         "Validation Loss": history["val"]
@@ -222,57 +164,175 @@ if st.button("Start Training", type="primary"):
 
     chart_placeholder.line_chart(final_chart)
 
-    # Mark progress as complete
     progress_bar.progress(1.0)
 
-    status_text.success("Training completed successfully!")
-
-    st.divider()
+    status_text.success("Training completed!")
 
     # --------------------------------------
-    # 9. Display Training Results
+    # 5. Diagnose Training Curves
     # --------------------------------------
 
-    st.subheader("📊 Training Results")
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.metric(
-            "Epochs Run",
-            history["epochs_run"]
-        )
-
-    with col2:
-        st.metric(
-            "Best Validation Loss",
-            f"{history['best_val_loss']:.4f}"
-        )
-
-    # --------------------------------------
-    # Model Training Diagnosis
-    # --------------------------------------
+    model_diagnosis = diagnose(history)
 
     st.subheader("Training Curve Diagnosis")
 
-    diagnosis = diagnose(history)
-
-    if diagnosis == "underfitting":
-        st.warning("Model Diagnosis: Underfitting")
-
-    elif diagnosis == "overfitting":
-        st.warning("Model Diagnosis: Overfitting")
-
-    else:
-        st.success("Model Diagnosis: Healthy")
+    st.write("Diagnosis:", model_diagnosis.title())
 
     # --------------------------------------
-    # 10. Educational Disclaimer
+    # 6. Record Experiment
     # --------------------------------------
+
+    experiment = {
+        "Experiment": len(st.session_state.experiments) + 1,
+        "Date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "Epochs Requested": epochs,
+        "Epochs Run": history["epochs_run"],
+        "Learning Rate": learning_rate,
+        "Hidden Size": hidden_size,
+        "Dropout": dropout,
+        "Batch Size": batch_size,
+        "Data Scaling": scale_data,
+        "Best Validation Loss": round(
+            history["best_val_loss"], 4
+        ),
+        "Final Training Loss": round(
+            history["train"][-1], 4
+        ),
+        "Final Validation Loss": round(
+            history["val"][-1], 4
+        ),
+        "Diagnosis": model_diagnosis
+    }
+
+    st.session_state.experiments.append(experiment)
+
+    st.success("Experiment saved successfully!")
+
+    # Show current experiment results
+    st.subheader("Latest Experiment")
+
+    st.write(experiment)
 
     st.info(
-        "This dashboard is for educational machine learning "
-        "experiments only. It is not clinically validated "
-        "and must not be used for real patient diagnosis "
-        "or medical decisions."
+        "Experiment comparisons use training and validation "
+        "results. The held-out test dataset is not evaluated "
+        "during these experiment runs."
     )
+
+# ------------------------------------------
+# 7. Educational Sample Demonstration
+# ------------------------------------------
+
+st.divider()
+
+st.subheader("Educational Sample Demonstration")
+
+st.warning(
+    "This demonstration uses an example from the "
+    "validation dataset. It is not a real patient "
+    "assessment or medical diagnosis."
+)
+
+if "demo_model" in st.session_state:
+
+    X_val = st.session_state.demo_X_val
+    y_val = st.session_state.demo_y_val
+    model = st.session_state.demo_model
+
+    sample_index = st.selectbox(
+        "Select an Example Sample",
+        range(len(X_val))
+    )
+
+    if st.button("Predict Example Sample"):
+
+        sample = torch.tensor(
+            X_val[sample_index],
+            dtype=torch.float32
+        ).reshape(1, -1)
+
+        model.eval()
+
+        with torch.no_grad():
+            logits = model(sample)
+            probability = torch.sigmoid(logits).item()
+
+        prediction = (
+            "Malignant" if probability >= 0.5
+            else "Benign"
+        )
+
+        actual = (
+            "Malignant" if int(y_val[sample_index]) == 1
+            else "Benign"
+        )
+
+        st.write("**Predicted Class:**", prediction)
+
+        st.write(
+            "**Predicted Probability Score:**",
+            round(probability, 4)
+        )
+
+        st.write("**Dataset Label:**", actual)
+
+else:
+
+    st.info(
+        "Please start model training first "
+        "to enable the sample demonstration."
+    )
+# ------------------------------------------
+# 8. Experiments Table
+# ------------------------------------------
+
+st.divider()
+
+st.subheader("Experiment History")
+
+if st.session_state.experiments:
+
+    experiments_df = pd.DataFrame(
+        st.session_state.experiments
+    )
+
+    # Display all recorded experiments
+    st.dataframe(
+        experiments_df,
+        use_container_width=True,
+        hide_index=True
+    )
+
+    # --------------------------------------
+    # 9. Download Experiments as CSV
+    # --------------------------------------
+
+    csv_data = experiments_df.to_csv(index=False).encode("utf-8")
+
+    st.download_button(
+        label="Download Experiments CSV",
+        data=csv_data,
+        file_name="meditrain_experiments.csv",
+        mime="text/csv"
+    )
+
+else:
+
+    st.info(
+        "No experiments recorded yet. "
+        "Start training to create your first experiment."
+    )
+
+
+# ------------------------------------------
+# 10. Educational Disclaimer
+# ------------------------------------------
+
+st.divider()
+
+st.info(
+    "This project is for educational machine learning "
+    "experiments only. It is not clinically validated "
+    "and must not be used for real patient diagnosis "
+    "or medical decisions."
+)
