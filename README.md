@@ -346,12 +346,6 @@ However, the project is an educational machine learning demonstration and is not
 - Final decision documented.
 - Project limitations and safety disclaimer documented.
 
-### Experiment Tracking
-
-- Experiment history table implemented.
-- CSV download functionality implemented.
-- Four experiments completed and compared.
-
 ## Project Structure
 
 ```text
